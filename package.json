@@ -1,30 +1,63 @@
 {
-	"name": "mini-kraken",
-	"version": "3.1",
-	"description": "A Discord Bot Template",
-	"funding": "https://mini-kraken.github.io",
-	"types": "./typings.d.ts",
-	"main": "shards.js",
-	"scripts": {
-		"start": "node shards.js",
-		"slash_deploy": "node base/update_commands.js"
-	},
-	"keywords": [
-		"discord-js"
-	],
-	"license": "Kraken Studios v2",
-	"dependencies": {
-		"@discordjs/rest": "^1.7.1",
-		"@top-gg/sdk": "^3.1.5",
-		"axios": "^1.4.0",
-		"discord-api-types": "^0.37.43",
-		"discord.js": "^14.11.0",
-		"express": "^4.18.2",
-		"express-validator": "^6.15.0",
-		"intercept-stdout": "^0.1.2",
-		"mariadb": "^3.1.2",
-		"module-alias": "^2.2.3",
-		"node": "^19.8.1",
-		"node-cache": "^5.1.2"
-	}
+  "name": "horacio-discord-bot",
+  "version": "1.0.0",
+  "description": "Horácio - Um bot de RPG para Discord com personalidade de Bardo",
+  "main": "dist/main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "chcp 65001 && tsx watch src/main.ts",
+    "build": "tsc",
+    "start": "node dist/main.js",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "rpg",
+    "typescript",
+    "prisma",
+    "supabase"
+  ],
+  "author": "Desenvolvedor",
+  "license": "MIT",
+  "dependencies": {
+    "@discordjs/rest": "^2.2.0",
+    "@prisma/client": "^5.7.1",
+    "discord-api-types": "^0.37.61",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.3.1",
+    "pino": "^8.17.2",
+    "pino-pretty": "^10.3.1",
+    "reflect-metadata": "^0.1.13",
+    "tsyringe": "^4.8.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "@vitest/coverage-v8": "^1.1.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.2",
+    "prettier": "^3.1.1",
+    "prettier-plugin-organize-imports": "^3.2.4",
+    "prisma": "^5.7.1",
+    "tsx": "^4.20.3",
+    "typescript": "^5.3.3",
+    "vitest": "^1.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }

@@ -1,0 +1,52 @@
+
+description: Define as melhores práticas para a arquitetura, performance e segurança de bots Discord.js.
+globs: "**/*"
+alwaysApply: false
+# Discord.js: Arquitetura, Performance e Segurança
+
+Este documento descreve as melhores práticas para construir bots Discord.js robustos, escaláveis e seguros.
+
+## Arquitetura Modular
+
+Uma arquitetura modular é essencial para bots complexos, promovendo a separação de responsabilidades:
+- **Event Handlers**: Módulos dedicados para lidar com eventos do Discord (e.g., `interactionCreate`, `ready`). [14]
+- **Command Handlers**: Lógica para processar comandos (slash commands, context menus). [15]
+- **Component Handlers**: Lógica para responder a interações de componentes (botões, menus de seleção). [16]
+
+## Performance e Escalabilidade
+
+- **Caching**: Utilize o sistema de cache do Discord.js de forma eficiente para reduzir chamadas desnecessárias à API do Discord. Gerencie o cache para evitar consumo excessivo de memória. [17]
+- **Sharding**: Para bots que servem um grande número de guilds (acima de 2.500), o sharding é indispensável para distribuir a carga e manter a responsividade. [18]
+
+## Segurança
+
+- **Validação de Entrada**: Valide todas as entradas do usuário para prevenir vulnerabilidades. [19]
+- **Rate Limiting**: O Discord.js lida com o rate limiting da API do Discord, mas considere implementar rate limiting adicional para comandos específicos do seu bot. [20]
+- **Validação de Permissões**: Sempre verifique as permissões do usuário e do bot antes de executar ações sensíveis. [21]
+
+## Tratamento de Erros e Logging
+
+- **Tratamento de Erros**: Implemente blocos `try-catch` para operações que podem falhar e forneça feedback útil. [22]
+- **Logging**: Utilize uma biblioteca de logging (e.g., Pino, Winston) para registrar eventos, erros e informações de depuração. [23]
+
+## Exemplo:
+
+```typescript
+// Bom exemplo: Validação de permissões e tratamento de erros
+client.on("interactionCreate", async interaction => {
+    if (!interaction.isCommand()) return;
+
+    if (!interaction.memberPermissions.has("MANAGE_GUILD")) {
+        return interaction.reply({ content: "Você não tem permissão para usar este comando.", ephemeral: true });
+    }
+
+    try {
+        // Lógica do comando
+        await interaction.reply("Comando executado com sucesso!");
+    } catch (error) {
+        console.error("Erro ao executar comando:", error);
+        await interaction.reply({ content: "Ocorreu um erro ao executar o comando.", ephemeral: true });
+    }
+});
+```
+

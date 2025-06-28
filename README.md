@@ -1,71 +1,119 @@
+# Horácio - Bot de RPG para Discord 🎭
 
-# Discord Bot Template
+Horácio é um bot de Discord com personalidade de Bardo, especializado em sistemas de RPG, rolagem de dados e gerenciamento de fichas de personagem. Construído com TypeScript, Discord.js v14+, Prisma e Supabase, seguindo os princípios de Arquitetura Limpa.
 
-Trata-se de um Template/Framework para facilitar a estruturar de bots em Discord.JS, tando um guia inicial para programadores que desejam criar bots rapidos e eficientes!
+**🔗 Conectado ao banco WiseBot (PrismLabs)** - Utiliza a infraestrutura existente com tabelas otimizadas para RPG.
 
-![App Screenshot](https://raw.githubusercontent.com/Mini-Kraken/Bot-Template/main/banner.png)
+## ✨ Funcionalidades
 
-## Referência
+- 🎲 **Sistema de Rolagem de Dados**: Rolagens simples e complexas com formatação temática
+- 📜 **Gerenciamento de Fichas**: Criação, edição e visualização de personagens
+- 🎭 **Personalidade Carismática**: Interações divertidas com a personalidade de Bardo
+- 🔒 **Segurança Robusta**: Row Level Security (RLS) e validação de dados
+- ⚡ **Performance Otimizada**: Arquitetura em camadas desacopladas
 
-Lembre-se de ler as seguintes documentações para te ajudar!
+## 🛠️ Stack Tecnológico
 
-- [Discord.JS](https://discord.js.org)
-- [API discord](https://discord.com/developers/docs/intro)
-- [Mini Kraken](rpg.arkanus.app)
+- **Linguagem**: TypeScript
+- **Runtime**: Node.js 18+
+- **Framework Discord**: Discord.js v14+ (com padrões modernos)
+- **ORM**: Prisma
+- **Banco de Dados**: PostgreSQL (Supabase)
+- **Injeção de Dependência**: tsyringe
+- **Build Tool**: tsx com hot reload
+- **Testes**: Vitest
+- **Linting**: ESLint + Prettier
 
-## FAQ
+### 🔒 **Padrões Discord.js v14+**
+- ✅ **MessageFlags.Ephemeral** para respostas efêmeras
+- ❌ **Proibido:** `ephemeral: true` (deprecated)
+- 📚 Consulte [Discord Patterns](.docs/DISCORD-PATTERNS.md) para detalhes
 
-### Porque usar essa base e não outras?
+## 🏗️ Arquitetura
 
-Nosso template da suporte a fragmentação ideal para Bots grandes e verificados diferente de vários outros por ai.
+O projeto segue os princípios de **Arquitetura Limpa** com fluxo de dados unidirecional:
 
-#### Algum bot Importante usa essa base?
-
-Sim, essa base é usada pelo Mini Kraken o maior bot de rpg de mesa brasileiro!
-
-## Feedback & Suporte
-
-Se você tiver algum feedback, por favor nos deixe saber por meio do nosso servidor do [Discord](https://discord.com/invite/Nm3CypkQaq)
-
-## Inicializando o bot
-
-Para rodar os testes, rode o seguinte comando
-
-```bash
-npm run start
+```
+Interação Discord → Handler → Comando/Componente → Serviço → Repositório → Banco de Dados
 ```
 
-## Funcionalidades
+### Estrutura de Pastas
 
-- [X]  Comandos Slash globais e locais
-- [X]  Menus de interação
-- [X]  Sistema de Botões
-- [X]  Sistema de Dropdown
-- [X]  Sistema de Modals
-- [X]  Sistema de Auto Completar
-- [X]  Estruturação com Suporte a Shards
-- [X]  Sistema de Detecção de Erros & Depuração de Bugs
-- [X]  Sistema anti Crash nativo
-- [X]  Suporte a Traduções
-- [X]  Sistema de Cache
-
-## Arquivo de configuração
-Crie um arquivo com o nome `config.json`, copie e cole o código abaixo:
-```json
-{ 
- "beta" : true,
- "token_beta": "TOKEN BOT DE TESTES",
- "token" :"TOKEN BOT PRINCIPAL",
- "client_id_beta": "ID BOT DE TESTES",
- "client_id": "ID BOT PRINCIPAL",
- "test_guild_id": "ID DO SERVIDOR DE TESTES"
-}
 ```
-- `beta`: É o switch ente um bot de testes e o bot principal. Para ligar no bot de testes, deixe `true`, para ligar o bot oficial, deixe `false`.
-- `token_beta`: O token do bot de testes
-- `token`: O token do bot principal
-- `client_id_beta`: O client id do bot de testes
-- `client_id`: O client id do bot principal
-- `test_guild_id`: O ID do seu servidor de testes. É onde os comandos locais serão lançados antes de irem pro global
+src/
+├── core/             # Lógica central do bot
+│   ├── container/    # Container de injeção de dependência
+│   ├── content/      # Sistema de conteúdo (mensagens)
+│   ├── errors/       # Classes de erro customizadas
+│   └── handlers/     # Handlers principais de interação
+└── modules/          # Módulos de negócio
+    ├── character/    # Sistema de personagens
+    │   ├── commands/
+    │   ├── repositories/
+    │   └── services/
+    └── dice-roller/  # Sistema de rolagem de dados
+        ├── commands/
+        └── services/
+```
 
-### Essa base foi inspirada e estruturada em cima da base [DiscordBot-Template](https://github.com/NamVr/DiscordBot-Template)
+## 🚀 Instalação e Configuração
+
+### Pré-requisitos
+
+- Node.js 18+ 
+- PostgreSQL (recomendado: Supabase)
+- Discord Bot Token
+
+### Passos de Instalação
+
+1. **Clone o repositório**:
+   ```bash
+   git clone <repository-url>
+   cd horacio-discord-bot
+   ```
+
+2. **Instale as dependências**:
+   ```bash
+   npm install
+   ```
+
+3. **Configure as variáveis de ambiente**:
+   ```bash
+   cp .env.example .env
+   # Edite o arquivo .env com suas configurações
+   ```
+
+4. **Configure o banco de dados**:
+   ```bash
+   npm run db:generate
+   npm run db:push
+   ```
+
+5. **Inicie o bot em modo de desenvolvimento**:
+   ```bash
+   npm run dev
+   ```
+
+## 📝 Scripts Disponíveis
+
+- `npm run dev` - Inicia o bot em modo de desenvolvimento com HMR
+- `npm run build` - Compila o projeto para produção
+- `npm run start` - Inicia o bot em modo de produção
+- `npm run lint` - Executa o linter
+- `npm run format` - Formata o código
+- `npm run test` - Executa os testes
+- `npm run db:studio` - Abre o Prisma Studio
+
+## 📚 Documentação
+
+- [Arquitetura](.docs/ARCHITECTURE.md) - Detalhes da arquitetura e padrões de design
+- [Setup](.docs/SETUP.md) - Guia completo de configuração
+- [Changelog](CHANGELOG.md) - Histórico de alterações
+
+## 🤝 Contribuição
+
+Contribuições são bem-vindas! Por favor, leia a documentação de arquitetura antes de contribuir.
+
+## 📄 Licença
+
+Este projeto está licenciado sob a licença MIT.

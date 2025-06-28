@@ -1,0 +1,40 @@
+
+description: Apresenta os princípios de Clean Code e SOLID para garantir a qualidade do código.
+globs: "**/*.(ts|js)"
+alwaysApply: false
+# Qualidade de Código (Clean Code)
+
+Este documento descreve os princípios de Clean Code e SOLID para garantir a qualidade, manutenibilidade e testabilidade do código.
+
+## Princípios SOLID
+
+Os princípios SOLID (Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion) são diretrizes de design de software que promovem código modular, flexível e testável. (// ABSTRAÇÃO SUGERIDA, NÃO NATIVA DA API: Princípios de engenharia de software aplicáveis a qualquer linguagem orientada a objetos.) [51]
+
+- **Single Responsibility Principle (SRP)**: Cada módulo ou classe deve ter uma única responsabilidade bem definida. [53]
+- **Open/Closed Principle (OCP)**: Entidades de software (classes, módulos, funções, etc.) devem ser abertas para extensão, mas fechadas para modificação.
+- **Liskov Substitution Principle (LSP)**: Objetos em um programa devem ser substituíveis por instâncias de seus subtipos sem alterar a correção desse programa.
+- **Interface Segregation Principle (ISP)**: Clientes não devem ser forçados a depender de interfaces que não usam.
+- **Dependency Inversion Principle (DIP)**: Módulos de alto nível não devem depender de módulos de baixo nível. Ambos devem depender de abstrações. Abstrações não devem depender de detalhes. Detalhes devem depender de abstrações.
+
+## Outras Práticas de Clean Code
+
+- **Funções Puras**: Prefira funções puras sempre que possível para lógica de negócio que não depende de estado externo. [52]
+- **Nomenclatura Descritiva**: Use nomes claros e descritivos para variáveis, funções e classes. [54]
+- **Code Smells e Refatoração**: Identifique e refatore code smells regularmente para manter a qualidade do código. [55]
+
+## Exemplo:
+
+```typescript
+// Bom exemplo: Função pura e nomenclatura descritiva
+function calculateDamage(attack: number, defense: number): number {
+    return Math.max(0, attack - defense);
+}
+
+// Mau exemplo: Nomenclatura ambígua e função com efeitos colaterais
+let totalDamage = 0;
+function calcDmg(a, d) {
+    totalDamage += a - d; // Efeito colateral
+    return a - d;
+}
+```
+

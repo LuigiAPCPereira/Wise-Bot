@@ -1,0 +1,80 @@
+
+description: Detalha as melhores práticas para modelagem de dados e otimização de queries com Prisma.
+globs: "**/*schema.prisma"
+alwaysApply: false
+# Prisma: Modelagem de Dados e Otimização de Queries
+
+Este documento aborda as melhores práticas para o design de schema e a otimização de queries ao usar Prisma.
+
+## Schema Design
+
+Defina seus modelos de dados no `schema.prisma` de forma clara e concisa, refletindo as entidades do seu domínio. [37]
+
+- **Modelagem de Dados**: Crie modelos que representem suas entidades de forma precisa.
+- **Relações**: Defina as relações entre os modelos (um-para-um, um-para-muitos, muitos-para-muitos) explicitamente no schema. [38]
+- **Tipos Escalares**: Utilize os tipos escalares do Prisma (String, Int, Boolean, DateTime, Float, Bytes, Json, Decimal, BigInt). Evite o uso excessivo de `@db` para tipos específicos do banco de dados, a menos que seja estritamente necessário. [39]
+
+## Otimização de Queries
+
+- **`select` e `include`**: Use `select` para buscar apenas os campos necessários e `include` para carregar dados relacionados de forma eficiente, evitando o carregamento excessivo de dados. [40]
+- **Filtragem e Paginação**: Implemente filtragem e paginação no lado do banco de dados para gerenciar grandes conjuntos de dados de forma eficiente. [41]
+
+## Migrações e Conexão
+
+- **Prisma Migrate**: Utilize o Prisma Migrate para gerenciar as alterações no schema do banco de dados de forma controlada. [42]
+- **Gerenciamento de Conexão**: O Prisma Client gerencia o pool de conexões automaticamente. Configure-o adequadamente para seu ambiente. [43]
+- **Prisma Accelerate**: Considere usar Prisma Accelerate para otimizar o desempenho de queries em ambientes serverless. [44]
+
+## Exemplo:
+
+```prisma
+// Bom exemplo: Schema bem definido com relações e tipos escalares
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String?
+  posts     Post[]
+  profile   Profile?
+}
+
+model Profile {
+  id       String @id @default(cuid())
+  bio      String?
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String @unique
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+```
+
+```typescript
+// Bom exemplo: Otimização de query com select e include
+async function getUserWithPosts(userId: string) {
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            posts: {
+                select: {
+                    id: true,
+                    title: true,
+                    published: true,
+                },
+            },
+        },
+    });
+    return user;
+}
+```
+

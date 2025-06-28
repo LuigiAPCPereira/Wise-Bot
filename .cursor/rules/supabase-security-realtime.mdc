@@ -1,0 +1,44 @@
+
+description: Aborda as melhores práticas de segurança e real-time com Supabase.
+globs: "**/*"
+alwaysApply: false
+# Supabase: Segurança e Real-time
+
+Este documento detalha as melhores práticas para segurança (Row Level Security) e funcionalidades em tempo real com Supabase.
+
+## Segurança (Row Level Security - RLS)
+
+- **RLS**: Habilite e configure o Row Level Security (RLS) no PostgreSQL para implementar controle de acesso granular aos dados. Isso garante que os usuários só possam acessar os dados aos quais têm permissão. [45]
+
+## Autenticação
+
+- **Supabase Auth**: Utilize o Supabase Auth para gerenciar a autenticação de usuários humanos em suas aplicações (web/mobile). Embora o bot Discord use tokens do Discord para sua própria autenticação, o Supabase Auth pode ser usado para associar usuários do Discord a registros no banco de dados e gerenciar seus dados. [46]
+
+## Real-time
+
+- **Real-time Subscriptions**: Use as funcionalidades de real-time do Supabase para notificar o bot sobre mudanças no banco de dados (e.g., atualização de status de personagem, novos itens no inventário). [47]
+
+## Exemplo:
+
+```sql
+-- Bom exemplo: Política RLS para permitir que usuários vejam apenas seus próprios posts
+CREATE POLICY "Users can view their own posts."
+  ON public.posts FOR SELECT
+  USING (auth.uid() = user_id);
+```
+
+```typescript
+// Bom exemplo: Assinando mudanças em tempo real com Supabase
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+
+supabase
+  .channel("public:items")
+  .on("postgres_changes", { event: "*", schema: "public", table: "items" }, payload => {
+    console.log("Mudança no item recebida!", payload);
+    // Lógica para notificar o bot ou atualizar o estado
+  })
+  .subscribe();
+```
+

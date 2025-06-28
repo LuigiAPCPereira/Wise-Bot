@@ -1,0 +1,53 @@
+description: Garante que os componentes de mensagem do Discord.js sigam os limites e as melhores práticas de interação.
+globs: "**/*"
+alwaysApply: false
+# Discord.js: Componentes de Mensagem e Interações
+
+Este documento detalha as melhores práticas para o uso de componentes de mensagem no Discord.js, focando em limites, tipos e tratamento de interações.
+
+## Tipos de Componentes
+
+A API do Discord define os seguintes tipos de componentes de mensagem:
+- **Action Row (Tipo 1)**: Contêiner para componentes interativos. Uma mensagem pode ter no máximo 5 Action Rows.
+- **Button (Tipo 2)**: Botão clicável, deve estar dentro de uma Action Row.
+- **String Select (Tipo 3)**: Menu de seleção de texto.
+- **Text Input (Tipo 4)**: Campo de entrada de texto, usado em Modals.
+- **User Select (Tipo 5)**: Menu de seleção de usuários.
+- **Role Select (Tipo 6)**: Menu de seleção de cargos.
+- **Mentionable Select (Tipo 7)**: Menu de seleção para menções.
+- **Channel Select (Tipo 8)**: Menu de seleção de canais.
+
+## Limites e Combinação com Conteúdo
+
+- Uma mensagem pode conter no máximo **5 Action Rows**. [11]
+- Cada Action Row pode conter no máximo **5 botões** ou **1 menu de seleção**. [12]
+- Os campos `content` (texto da mensagem) e `embeds` (mensagens ricas) funcionam em conjunto com os componentes de mensagem. Eles são frequentemente usados em combinação para fornecer contexto textual e visual. [10]
+
+## Tratamento de Interações
+
+- Quando um usuário interage com um componente, uma interação é enviada ao seu bot.
+- É crucial responder a essas interações dentro de **3 segundos** para evitar que a interação expire. [13]
+- As respostas podem ser mensagens, atualizações de mensagens ou modais.
+
+## Exemplo:
+
+```typescript
+// Bom exemplo: Resposta rápida a uma interação de botão
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isButton()) return;
+
+    await interaction.deferReply({ ephemeral: true }); // Responde em menos de 3 segundos
+    // Lógica de processamento do botão
+    await interaction.editReply('Botão clicado com sucesso!');
+});
+
+// Mau exemplo: Demora na resposta à interação
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isButton()) return;
+
+    // Lógica demorada sem deferReply, pode expirar
+    await new Promise(resolve => setTimeout(resolve, 5000)); 
+    await interaction.reply('Isso pode ter expirado.'); // Interação pode ter expirado
+});
+```
+

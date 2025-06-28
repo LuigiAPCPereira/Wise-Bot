@@ -1,0 +1,53 @@
+
+description: Orienta sobre o design e a interatividade de embeds e o uso de mensagens efêmeras no Discord.js.
+globs: "**/*"
+alwaysApply: false
+# Discord.js: Design de Embeds e Mensagens Efêmeras
+
+Este documento aborda as melhores práticas para o design de embeds e o uso apropriado de mensagens efêmeras no Discord.js.
+
+## Design de Embeds
+
+Embeds são elementos visuais para apresentar informações ricas e funcionam em conjunto com os componentes de mensagem. [24]
+
+- **Estrutura de Informação**: Organize informações hierarquicamente com títulos, descrições, campos e footers. [25]
+- **Campos Dinâmicos**: Popule campos com dados do jogo (estatísticas, inventário) buscando do banco de dados. [26]
+- **Cores e Ícones**: Use cores e ícones para categorizar e melhorar a estética. [27]
+- **Timestamps**: Inclua timestamps para atualizações ou eventos. [28]
+- **Interatividade com Componentes**: Combine embeds com componentes para navegação e interatividade:
+    - **Paginação**: Use botões para paginar listas longas. [29]
+    - **Select Menus**: Permita filtrar informações ou selecionar opções. [30]
+    - **Modals**: Colete informações complexas do usuário. [31]
+
+## Mensagens Efêmeras
+
+Mensagens efêmeras são visíveis apenas para o usuário que as acionou, ideais para feedback instantâneo ou informações privadas. [32]
+
+- **Uso Apropriado**:
+    - **Feedback de Comando**: Confirmação de execução ou mensagens de erro. [33]
+    - **Informações Privadas**: Detalhes de inventário, estatísticas de personagem. [34]
+    - **Interações de Formulário/Modal**: Confirmação de submissão ou validação. [35]
+- Para enviar uma mensagem efêmera, inclua a flag `MessageFlags.Ephemeral` no payload. [36]
+
+## Exemplo:
+
+```typescript
+// Bom exemplo: Embed com campos dinâmicos e mensagem efêmera
+import { EmbedBuilder, MessageFlags } from 'discord.js';
+
+async function sendCharacterStats(interaction, characterData) {
+    const embed = new EmbedBuilder()
+        .setTitle(`${characterData.name} - Estatísticas`)
+        .setDescription('Aqui estão as estatísticas do seu personagem.')
+        .addFields(
+            { name: 'Força', value: characterData.strength.toString(), inline: true },
+            { name: 'Destreza', value: characterData.dexterity.toString(), inline: true },
+            { name: 'Inteligência', value: characterData.intelligence.toString(), inline: true },
+        )
+        .setColor('Blue')
+        .setTimestamp();
+
+    await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
+}
+```
+

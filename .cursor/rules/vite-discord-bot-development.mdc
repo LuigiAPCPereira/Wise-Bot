@@ -1,0 +1,78 @@
+
+description: Descreve a configuração e os benefícios do uso de Vite com vite-plugin-node para desenvolvimento de bots Discord.js.
+globs: "vite.config.(ts|js)"
+alwaysApply: false
+# Build/Development Tools: Vite para Bots Discord (Backend)
+
+Este documento descreve a configuração e os benefícios do uso de Vite com `vite-plugin-node` para o desenvolvimento de bots Discord.js, aproveitando o Hot Module Replacement (HMR).
+
+## `vite-plugin-node` para HMR
+
+`vite-plugin-node` oferece Hot Module Replacement (HMR) para desenvolvimento de bots Discord baseados em Node.js, permitindo que as alterações no código sejam aplicadas sem reiniciar o servidor de desenvolvimento. [61]
+
+## Configuração e Uso
+
+1.  **Instalação**:
+    ```bash
+    npm install -D vite-plugin-node
+    # ou yarn add -D vite-plugin-node
+    # ou pnpm add -D vite-plugin-node
+    ```
+
+2.  **Configuração do Vite (`vite.config.ts` ou `vite.config.js`)**:
+    ```typescript
+    // vite.config.ts
+    import { defineConfig } from 'vite';
+    import { VitePluginNode } from 'vite-plugin-node';
+
+    export default defineConfig({
+        server: {
+            hmr: {
+                overlay: false,
+            },
+        },
+        plugins: [
+            ...VitePluginNode({
+                adapter: 'express', // ou 'koa', 'nest', 'fastify', 'none'
+                appPath: './src/main.ts', // Caminho para o seu arquivo de entrada principal do bot
+                exportName: 'viteNodeApp',
+            }),
+        ],
+        optimizeDeps: {
+            exclude: ['discord.js', '@prisma/client', 'tsyringe', 'pino'],
+        },
+        build: {
+            rollupOptions: {
+                external: ['discord.js', '@prisma/client', 'tsyringe', 'pino'],
+            },
+        },
+    });
+    ```
+
+3.  **Arquivo de Entrada (`src/main.ts` ou similar)**:
+    Seu arquivo de entrada deve exportar a instância da sua aplicação (e.g., o cliente Discord.js).
+    ```typescript
+    // src/main.ts
+    import { Client, GatewayIntentBits } from 'discord.js';
+
+    const client = new Client({ intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+    ]});
+
+    client.on('ready', () => {
+        console.log(`Logged in as ${client.user?.tag}!`);
+    });
+
+    client.login(process.env.DISCORD_TOKEN);
+
+    export const viteNodeApp = client;
+    ```
+
+## Benefícios do HMR com `vite-plugin-node`
+
+-   **Desenvolvimento Mais Rápido**: Alterações no código são refletidas quase instantaneamente. [62]
+-   **Manutenção de Estado**: Preserva o estado da aplicação entre as atualizações. [63]
+-   **Experiência de Desenvolvedor Aprimorada**: Reduz o atrito no desenvolvimento. [64]
+

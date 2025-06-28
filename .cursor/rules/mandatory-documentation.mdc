@@ -1,0 +1,106 @@
+
+description: Lista a documentação obrigatória e as melhores práticas para documentar projetos de bots Discord.js.
+globs: "**/*"
+alwaysApply: false
+# Documentação Mandatória
+
+Este documento lista os tipos de documentação obrigatória e as melhores práticas para manter um projeto de bot Discord.js bem documentado.
+
+## Documentação Essencial
+
+-   **TSDoc**: Utilize TSDoc para documentar o código TypeScript, incluindo `@param`, `@returns`, `@throws`. [65]
+-   **README.md**: Mantenha um `README.md` estruturado com informações sobre o projeto, instalação, uso e contribuição. [66]
+-   **Documentação de Arquitetura**: Documente as decisões de arquitetura e padrões de design utilizados. [67]
+-   **Changelog**: Mantenha um `CHANGELOG.md` para registrar todas as alterações significativas. [68]
+
+## Exemplo:
+
+```typescript
+// Bom exemplo: Documentação TSDoc
+/**
+ * Calcula o dano causado por um ataque, considerando a defesa.
+ * @param attack O valor de ataque do agressor.
+ * @param defense O valor de defesa do alvo.
+ * @returns O dano final, garantindo que não seja negativo.
+ * @throws {Error} Se os valores de ataque ou defesa forem inválidos.
+ */
+function calculateDamage(attack: number, defense: number): number {
+    if (attack < 0 || defense < 0) {
+        throw new Error("Attack and defense values must be non-negative.");
+    }
+    return Math.max(0, attack - defense);
+}
+```
+
+```markdown
+<!-- Bom exemplo: Estrutura de README.md -->
+# Nome do Seu Bot
+
+Um bot de RPG para Discord para Discord construído com Discord.js, Prisma e Supabase.
+
+## Sumário
+
+- [Funcionalidades](#funcionalidades)
+- [Tecnologias](#tecnologias)
+- [Instalação](#instalação)
+- [Uso](#uso)
+- [Contribuição](#contribuição)
+- [Licença](#licença)
+
+## Funcionalidades
+
+- Sistema de combate
+- Inventário de itens
+- Gerenciamento de personagens
+
+## Tecnologias
+
+- Node.js
+- Discord.js v14+
+- Prisma ORM
+- Supabase (PostgreSQL, Auth, Realtime)
+- Vite (para desenvolvimento)
+
+## Instalação
+
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/seu-usuario/seu-bot.git
+   cd seu-bot
+   ```
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
+3. Configure as variáveis de ambiente (crie um arquivo `.env`):
+   ```
+   DISCORD_TOKEN=SEU_TOKEN_DO_BOT
+   DATABASE_URL="postgresql://..."
+   SUPABASE_URL=...
+   SUPABASE_ANON_KEY=...
+   ```
+4. Execute as migrações do Prisma:
+   ```bash
+   npx prisma migrate dev
+   ```
+
+## Uso
+
+Para iniciar o bot em modo de desenvolvimento:
+```bash
+npm run dev
+```
+Para iniciar o bot em produção:
+```bash
+npm run start
+```
+
+## Contribuição
+
+Contribuições são bem-vindas! Por favor, leia o `CONTRIBUTING.md` para mais detalhes.
+
+## Licença
+
+Este projeto está licenciado sob a licença MIT.
+```
+

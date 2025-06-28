@@ -1,0 +1,45 @@
+
+description: Orienta sobre as melhores práticas de testabilidade e tipos de testes.
+globs: "**/*.(ts|js)"
+alwaysApply: false
+# Testabilidade
+
+Este documento aborda as melhores práticas para garantir a testabilidade do seu bot Discord.js.
+
+## Arquitetura Orientada a Testes
+
+- Projete sua aplicação com a testabilidade em mente, facilitando a escrita de testes unitários e de integração. [56]
+
+## Mocks e Stubs
+
+- Utilize mocks e stubs para isolar unidades de código durante os testes, simulando dependências externas. [57]
+
+## Tipos de Testes
+
+- **Testes Unitários**: Teste unidades individuais de código (funções, classes) isoladamente. [58]
+- **Testes de Integração**: Teste a interação entre diferentes módulos ou serviços. [59]
+
+## Cobertura de Código
+
+- Monitore a cobertura de código para garantir que uma porcentagem adequada do seu código seja testada. [60]
+
+## Exemplo:
+
+```typescript
+// Bom exemplo: Teste unitário de uma função pura
+// mathUtils.ts
+export function add(a: number, b: number): number {
+    return a + b;
+}
+
+// mathUtils.test.ts (usando Jest)
+import { add } from './mathUtils';
+
+describe('add', () => {
+    it('should add two numbers correctly', () => {
+        expect(add(1, 2)).toBe(3);
+        expect(add(-1, 1)).toBe(0);
+    });
+});
+```
+

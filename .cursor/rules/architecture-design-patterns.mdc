@@ -1,0 +1,61 @@
+
+description: Descreve os padrões de arquitetura recomendados para bots Discord.js.
+globs: "**/*"
+alwaysApply: false
+# Arquitetura e Padrões de Design
+
+Este documento descreve os padrões de arquitetura recomendados para construir bots Discord.js escaláveis e manuteníveis.
+
+## Arquitetura em Camadas Desacopladas
+
+Uma arquitetura em camadas desacopladas promove a separação de preocupações e facilita a manutenibilidade e testabilidade. Um padrão comum é:
+
+- **Handler**: Recebe interações (comandos, botões) e delega ao Service. (// ABSTRAÇÃO SUGERIDA, NÃO NATIVA DA API: Este é um padrão de design comum para organizar a lógica de tratamento de interações, não um termo oficial da API do Discord.)
+- **Service**: Contém a lógica de negócio principal. Orquestra operações complexas e aplica regras de negócio. (// ABSTRAÇÃO SUGERIDA, NÃO NATIVA DA API: Padrão de design para encapsular a lógica de negócio.)
+- **Repository**: Abstrai a lógica de acesso a dados. Fornece uma interface para operações de CRUD. (// ABSTRAÇÃO SUGERIDA, NÃO NATIVA DA API: Padrão de design para abstrair a camada de persistência.)
+- **Database**: A camada de persistência de dados (Prisma/Supabase). [48]
+
+## Fluxo de Dados Unidirecional
+
+O fluxo de dados unidirecional é um padrão onde os dados fluem em uma única direção através das camadas da aplicação, aumentando a previsibilidade e facilitando a depuração. (// ABSTRAÇÃO SUGERIDA, NÃO NATIVA DA API: Padrão de arquitetura para gerenciar o estado da aplicação.) [49]
+
+## Padrões de Arquitetura (Hexagonal/Clean Architecture)
+
+A Arquitetura Hexagonal (Ports and Adapters) ou Clean Architecture reforçam a separação entre o domínio da aplicação e as preocupações externas (UI, banco de dados, APIs), promovendo a testabilidade e a flexibilidade. (// ABSTRAÇÃO SUGERIDA, NÃO NATIVA DA API: Padrões de arquitetura para promover a separação de preocupações.) [50]
+
+## Exemplo:
+
+```typescript
+// Bom exemplo: Estrutura de camadas
+// handlers/commandHandler.ts
+class CommandHandler {
+    constructor(private userService: UserService) {}
+
+    async handleUserCommand(interaction) {
+        const userId = interaction.user.id;
+        const user = await this.userService.getUserProfile(userId);
+        // ... responder com os dados do usuário
+    }
+}
+
+// services/userService.ts
+class UserService {
+    constructor(private userRepository: UserRepository) {}
+
+    async getUserProfile(userId: string) {
+        return this.userRepository.findById(userId);
+    }
+    // ... lógica de negócio
+}
+
+// repositories/userRepository.ts
+class UserRepository {
+    constructor(private prisma: PrismaClient) {}
+
+    async findById(id: string) {
+        return this.prisma.user.findUnique({ where: { id } });
+    }
+    // ... operações CRUD
+}
+```
+

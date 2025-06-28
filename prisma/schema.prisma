@@ -1,0 +1,255 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================================================
+// MODELOS DE DADOS - ADAPTADO PARA O BANCO WISEBOT EXISTENTE
+// ============================================================================
+
+/// Configurações por servidor/guild
+model GuildConfig {
+  /// ID único da configuração
+  id String @id
+
+  /// ID do servidor Discord
+  guildId String
+
+  /// Data de criação
+  createdAt DateTime @default(now())
+
+  /// Data de atualização
+  updatedAt DateTime @updatedAt
+
+  /// Prefixo de comandos
+  prefix String @default("!")
+
+  /// Idioma do servidor
+  language String @default("pt-BR")
+
+  /// Timezone do servidor
+  timezone String @default("America/Sao_Paulo")
+
+  /// Se RPG está habilitado
+  rpgEnabled Boolean @default(true)
+
+  /// Sistema de dados padrão
+  defaultDiceSystem String @default("d20")
+
+  /// Se moderação está habilitada
+  moderationEnabled Boolean @default(false)
+
+  /// Canal de logs
+  logChannelId String?
+
+  /// Se economia está habilitada
+  economyEnabled Boolean @default(false)
+
+  /// Nome da moeda
+  currencyName String @default("moedas")
+
+  /// Canal de fichas de personagem
+  characterSheetChannelId String?
+
+  @@map("guild_configs")
+}
+
+/// Representa um usuário do Discord no sistema
+model User {
+  /// ID único do usuário
+  id String @id
+
+  /// ID do Discord (snowflake)
+  discordId String
+
+  /// Data de criação do registro
+  createdAt DateTime @default(now())
+
+  /// Data da última atualização
+  updatedAt DateTime @updatedAt
+
+  /// Nome de usuário no Discord
+  username String
+
+  /// Nome de exibição (pode ser null)
+  displayName String?
+
+  /// Idioma preferido
+  language String @default("pt-BR")
+
+  /// Timezone do usuário
+  timezone String @default("America/Sao_Paulo")
+
+  /// Relações com servidores
+  userGuilds UserGuild[]
+
+  /// Personagens pertencentes a este usuário
+  characters Character[]
+
+  @@map("users")
+}
+
+/// Relação usuário-servidor com dados específicos
+model UserGuild {
+  /// ID único da relação
+  id String @id
+
+  /// ID do usuário
+  userId String
+
+  /// ID do servidor
+  guildId String
+
+  /// Data de criação
+  createdAt DateTime @default(now())
+
+  /// Data de atualização
+  updatedAt DateTime @updatedAt
+
+  /// Nickname no servidor
+  nickname String?
+
+  /// Data de entrada no servidor
+  joinedAt DateTime @default(now())
+
+  /// Saldo de moedas
+  balance Int @default(0)
+
+  /// Relação com usuário
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_guilds")
+}
+
+/// Representa uma ficha de personagem de RPG (adaptado para WiseBot)
+model Character {
+  /// ID único do personagem
+  id String @id
+
+  /// ID do usuário proprietário
+  userId String
+
+  /// ID do servidor
+  guildId String
+
+  /// Data de criação do personagem
+  createdAt DateTime @default(now())
+
+  /// Data da última atualização
+  updatedAt DateTime @updatedAt
+
+  /// Nome do personagem
+  name String
+
+  /// Descrição/biografia do personagem
+  description String?
+
+  /// URL da imagem do personagem
+  imageUrl String?
+
+  /// Sistema de RPG (d20, d100, etc.)
+  system String @default("d20")
+
+  /// Nível do personagem
+  level Int @default(1)
+
+  /// Experiência do personagem
+  experience Int @default(0)
+
+  /// Atributos do personagem (JSON flexível)
+  attributes Json @default("{}")
+
+  /// Habilidades do personagem (JSON flexível)
+  skills Json @default("{}")
+
+  /// Equipamentos e itens (JSON flexível)
+  equipment Json @default("{}")
+
+  /// Se o personagem está ativo
+  isActive Boolean @default(true)
+
+  /// Se o personagem é público
+  isPublic Boolean @default(false)
+
+  /// Relação com o usuário proprietário
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Rolagens de dados relacionadas
+  diceRolls DiceRoll[]
+
+  @@map("characters")
+}
+
+/// Histórico de rolagens de dados
+model DiceRoll {
+  /// ID único da rolagem
+  id String @id
+
+  /// ID do usuário que fez a rolagem
+  userId String
+
+  /// ID do servidor
+  guildId String
+
+  /// ID do canal
+  channelId String
+
+  /// Data da rolagem
+  createdAt DateTime @default(now())
+
+  /// Expressão dos dados (ex: "1d20+5")
+  expression String
+
+  /// Resultado final da rolagem
+  result Int
+
+  /// Detalhes da rolagem (dados individuais, etc.)
+  details Json
+
+  /// ID do personagem (opcional)
+  characterId String?
+
+  /// Motivo da rolagem (opcional)
+  reason String?
+
+  /// Relação com personagem (opcional)
+  character Character? @relation(fields: [characterId], references: [id], onDelete: SetNull)
+
+  @@map("dice_rolls")
+}
+
+// ============================================================================
+// CONFIGURAÇÃO DE SEGURANÇA (ROW LEVEL SECURITY - RLS)
+// ============================================================================
+
+// IMPORTANTE: O banco WiseBot já está configurado, mas para referência:
+//
+// Para habilitar Row Level Security no Supabase:
+// 1. ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+// 2. ALTER TABLE characters ENABLE ROW LEVEL SECURITY;
+// 3. ALTER TABLE dice_rolls ENABLE ROW LEVEL SECURITY;
+//
+// Políticas de exemplo (adaptar conforme necessário):
+// CREATE POLICY "Users can view own data" ON users FOR SELECT USING (discordId = current_setting('app.current_user_id'));
+// CREATE POLICY "Users can view own characters" ON characters FOR SELECT USING (userId IN (SELECT id FROM users WHERE discordId = current_setting('app.current_user_id')));
+
+// ============================================================================
+// ÍNDICES PARA PERFORMANCE (já existem no banco WiseBot)
+// ============================================================================
+
+// Índices recomendados:
+// CREATE INDEX idx_characters_user_id ON characters("userId");
+// CREATE INDEX idx_characters_guild_id ON characters("guildId");
+// CREATE INDEX idx_characters_active ON characters("isActive") WHERE "isActive" = true;
+// CREATE INDEX idx_dice_rolls_user_id ON dice_rolls("userId");
+// CREATE INDEX idx_dice_rolls_character_id ON dice_rolls("characterId");
+// CREATE INDEX idx_user_guilds_user_id ON user_guilds("userId");
+// CREATE INDEX idx_user_guilds_guild_id ON user_guilds("guildId");
